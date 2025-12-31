@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incident Report- Police Headquarters</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Fixed Top Navbar -->
+    <nav class="navbar glassmorphism">
+        <div class="navbar-left">
+            <img src="assets/banner.jpg" alt="Dhaka Metropolitan Police Logo" class="navbar-logo">
+            <span class="navbar-title">Bangladesh Police Department</span>
+        </div>
+        <div class="navbar-center">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="academy.html" class="nav-link">Police Academy</a>
+            <a href="headquarters.html" class="nav-link">Police Headquarters</a>
+        </div>
+        <div class="navbar-right">
+            <div class="user-header" id="userHeader">Login to View Status</div>
+            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+        </div>
+        <!-- Mobile Hamburger Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="academy.html" class="nav-link">Police Academy</a>
+            <a href="headquarters.html" class="nav-link">Police Headquarters</a>
+        </div>
+    </nav>
+
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <button onclick="showSection('register')">Create Account</button>
+        <button onclick="showSection('myPosts')">My Posts</button>
+        <button onclick="showHighCommand()">High Command</button>
+        <button onclick="showPersonnel()">Current Personnel List</button>
+    </div>
+
+    <!-- Banner -->
+    <div class="banner">
+        <img src="assets/banner.jpg" alt="Dhaka Metropolitan Police Banner">
+        <h1>Incident Report</h1>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content glassmorphism">
+        <div class="template-section">
+            <p id="templateText" class="styled-template"> [ INCIDENT DETAILS ]
+🗺️ | Situation Name: 
+🕵🏼 | Robbers Total: 
+🔫 | Class: 
+🗿 | Demands: 
+🏎️ | Escape Vehicle Name: 
+   | Vehicle Owner Name: 
+🙅 | Hostage Name : 
+🟢 | Status: 
+👮 | Commanding Officer: 
+👮 | Negotiating Officer:</p>
+            <button class="copy-icon" onclick="copyTemplate('categoryKey')" title="Copy Template">📋</button>
+        </div>
+        <textarea id="postContent" placeholder="Fill in the details here..."></textarea>
+        <button onclick="submitPost('categoryKey')">Submit Post</button>
+        <div id="postsList" class="posts-container"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+              </html>
