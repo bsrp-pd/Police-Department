@@ -248,4 +248,114 @@ window.onload = () => {
     if (window.location.pathname.includes('incident-report.html')) loadPosts('incident');
     if (window.location.pathname.includes('report.html')) loadPosts('report');
     if (window.location.pathname.includes('warrant-issues.html')) loadPosts('warrant');
+} 
+// ... (Keep existing Firebase config and other functions)
+
+// Hash Password (Simple SHA-256 for client-side)
+async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Register User
+async function handleRegister(event) {
+    event.preventDefault();
+    const ign = document.getElementById('ign').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const role = document.getElementById('role').value;
+    const terms = document.getElementById('terms').checked;
+
+    if (!ign || !password || !role || !terms) {
+        alert('Please fill all fields and accept terms.');
+        return;
+    }
+    if (password !== confirmPassword) {
+        alert('Passwords do not match.');
+        return;
+    }
+
+    const hashedPassword = await hashPassword(password);
+    const userData = { ign, password: hashedPassword, role, activity: 'Active' };
+
+    db.ref('users/' + ign).set(userData).then(() => {
+        alert('Account created successfully! Please login.');
+        window.location.href = 'login.html';
+    }).catch(error => {
+        console.error('Registration error:', error);
+        alert('Registration failed. IGN may already exist.');
+    });
+}
+
+// Login User
+async function handleLogin(event) {
+    event.preventDefault();
+    const ign = document.getElementById('loginIgn').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    if (!ign || !password) {
+        alert('Please fill all fields.');
+        return;
+    }
+
+    const hashedPassword = await hashPassword(password);
+    db.ref('users/' + ign).once('value').then(snapshot => {
+        const user = snapshot.val();
+        if (user && user.password === hashedPassword) {
+            currentUser = { ign: user.ign, rank: user.role, activity: user.activity };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            updateUserHeader();
+            updateMenu();
+            alert('Login successful!');
+            window.location.href = 'index.html';
+        } else {
+            alert('Invalid credentials.');
+        }
+    }).catch(error => {
+        console.error('Login error:', error);
+        alert('Login failed.');
+    });
+}
+
+// Update Menu After Login
+function updateMenu() {
+    if (currentUser) {
+        document.getElementById('createAccountBtn').classList.add('hidden');
+        document.getElementById('loginAccountBtn').classList.add('hidden');
+        document.getElementById('logoutBtn').classList.remove('hidden');
+        // Optionally, add user's IGN to menu
+        const menu = document.getElementById('sideMenu');
+        menu.insertAdjacentHTML('afterbegin', `<div class="menu-user">${currentUser.ign}</div>`);
+    }
+}
+
+// Logout
+function logout() {
+    currentUser = null;
+    localStorage.removeItem('currentUser');
+    updateUserHeader();
+    updateMenu();
+    window.location.href = 'index.html';
+}
+
+// Initialize Forms
+if (document.getElementById('registerForm')) {
+    document.getElementById('registerForm').addEventListener('submit', handleRegister);
+}
+if (document.getElementById('loginForm')) {
+    document.getElementById('loginForm').addEventListener('submit', handleLogin);
+}
+
+// Update window.onload to include menu update
+window.onload = () => {
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        updateUserHeader();
+        updateMenu();
+    }
+    // ... (Keep existing loadPosts logic)
 };
