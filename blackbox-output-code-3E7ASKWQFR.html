@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dhaka Metropolitan Police - Bangladesh Police Department</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="banner">
+        <img src="assets/banner.jpg" alt="Dhaka Metropolitan Police Banner">
+        <h1>Bangladesh Police Department</h1>
+    </div>
+    <nav class="breadcrumbs">
+        <span>Home</span>
+    </nav>
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    <div class="side-menu" id="sideMenu">
+        <button onclick="showSection('register')">Create Account</button>
+        <button onclick="showSection('myPosts')">My Posts</button>
+        <button onclick="showHighCommand()">High Command</button>
+        <button onclick="showPersonnel()">Current Personnel List</button>
+    </div>
+    <div class="content glassmorphism">
+        <h2>Welcome to the Bangladesh Police Department Forum</h2>
+        <p>Select a section from the menu or navigate below.</p>
+        <div class="sections">
+            <a href="academy.html" class="section-link">Police Academy</a>
+            <a href="headquarters.html" class="section-link">Police Headquarters (Operations)</a>
+        </div>
+        <div id="registerForm" class="hidden">
+            <h3>Register</h3>
+            <input type="text" id="ign" placeholder="In-Game Name (IGN)">
+            <button onclick="registerUser()">Register</button>
+        </div>
+        <div id="myPosts" class="hidden">
+            <h3>My Posts</h3>
+            <div id="userPosts"></div>
+        </div>
+        <div id="personnelList" class="hidden">
+            <h3>Current Personnel List</h3>
+            <div id="personnel"></div>
+        </div>
+    </div>
+    <div class="user-header" id="userHeader"></div>
+    <script src="script.js"></script>
+</body>
+</html>
