@@ -8,41 +8,71 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <nav class="breadcrumbs">
-        <a href="index.html"><- Back to Home</a>
+    <!-- Fixed Top Navbar (Same as index.html for consistency) -->
+    <nav class="navbar glassmorphism">
+        <div class="navbar-left">
+            <img src="assets/banner.jpg" alt="Dhaka Metropolitan Police Logo" class="navbar-logo">
+            <span class="navbar-title">Bangladesh Police Department</span>
+        </div>
+        <div class="navbar-center">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="academy.html" class="nav-link">Police Academy</a>
+            <a href="headquarters.html" class="nav-link active">Police Headquarters</a>
+        </div>
+        <div class="navbar-right">
+            <div class="user-header" id="userHeader">Login to View Status</div>
+            <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+        </div>
+        <!-- Mobile Hamburger Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="academy.html" class="nav-link">Police Academy</a>
+            <a href="headquarters.html" class="nav-link">Police Headquarters</a>
+        </div>
     </nav>
-    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
+    <!-- Side Menu -->
     <div class="side-menu" id="sideMenu">
         <button onclick="showSection('register')">Create Account</button>
         <button onclick="showSection('myPosts')">My Posts</button>
         <button onclick="showHighCommand()">High Command</button>
         <button onclick="showPersonnel()">Current Personnel List</button>
     </div>
+
+    <!-- Main Content: Category Selector -->
     <div class="content glassmorphism">
         <h2>Police Headquarters (Operations)</h2>
-        <div class="channel">
-            <h3>#Incident Report</h3>
-            <button onclick="copyTemplate('incident')">Template Copy</button>
-            <textarea id="incidentPost" placeholder="Paste template and fill details"></textarea>
-            <button onclick="submitPost('incident')">Submit</button>
-            <div id="incidentPosts"></div>
+        <p>Select a category to enter and manage reports.</p>
+        <div class="categories">
+            <a href="incident-report.html" class="category-card">
+                <h3>#Incident Report</h3>
+                <p>Report and track incidents in real-time.</p>
+            </a>
+            <a href="report.html" class="category-card">
+                <h3>#Report</h3>
+                <p>Submit general reports and updates.</p>
+            </a>
+            <a href="warrant-issues.html" class="category-card">
+                <h3>#Warrant Issues</h3>
+                <p>Manage and issue warrants.</p>
+            </a>
         </div>
-        <div class="channel">
-            <h3>#Report</h3>
-            <button onclick="copyTemplate('report')">Template Copy</button>
-            <textarea id="reportPost" placeholder="Paste template and fill details"></textarea>
-            <button onclick="submitPost('report')">Submit</button>
-            <div id="reportPosts"></div>
+        <!-- Hidden Forms for Side Menu (if needed) -->
+        <div id="registerForm" class="hidden">
+            <h3>Register</h3>
+            <input type="text" id="ign" placeholder="In-Game Name (IGN)">
+            <button onclick="registerUser()">Register</button>
         </div>
-        <div class="channel">
-            <h3>#Warrant Issues</h3>
-            <button onclick="copyTemplate('warrant')">Template Copy</button>
-            <textarea id="warrantPost" placeholder="Paste template and fill details"></textarea>
-            <button onclick="submitPost('warrant')">Submit</button>
-            <div id="warrantPosts"></div>
+        <div id="myPosts" class="hidden">
+            <h3>My Posts</h3>
+            <div id="userPosts"></div>
+        </div>
+        <div id="personnelList" class="hidden">
+            <h3>Current Personnel List</h3>
+            <div id="personnel"></div>
         </div>
     </div>
-    <div class="user-header" id="userHeader"></div>
+
     <script src="script.js"></script>
 </body>
-</html>
+    </html>
