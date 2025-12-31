@@ -1,0 +1,30 @@
+body {
+  background: #0b1c2d;
+  font-family: sans-serif;
+  color: white;
+}
+
+.auth-box {
+  width: 300px;
+  margin: 120px auto;
+  background: rgba(255,255,255,0.08);
+  padding: 30px;
+  border-radius: 12px;
+}
+
+.auth-box input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 6px;
+}
+
+.auth-box button {
+  width: 100%;
+  padding: 10px;
+  background: #007bff;
+  border: none;
+  color: white;
+  border-radius: 6px;
+}
