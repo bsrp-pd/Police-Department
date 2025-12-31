@@ -1,4 +1,4 @@
-// Firebase Config (Replace with your own from Firebase Console)
+// Firebase Config (Replace with your real keys!)
 const firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "your-project.firebaseapp.com",
@@ -18,6 +18,7 @@ const highCommandPassword = "admin123"; // Change in production
 // Utility Functions
 function toggleMenu() {
     document.getElementById('sideMenu').classList.toggle('open');
+    document.getElementById('mobileMenu').classList.toggle('show');
 }
 
 function showSection(section) {
@@ -28,6 +29,8 @@ function showSection(section) {
 function updateUserHeader() {
     if (currentUser) {
         document.getElementById('userHeader').innerHTML = `${currentUser.ign} | ${currentUser.rank} | Active`;
+    } else {
+        document.getElementById('userHeader').innerHTML = 'Not Logged In';
     }
 }
 
@@ -36,19 +39,25 @@ function registerUser() {
     const ign = document.getElementById('ign').value;
     if (ign) {
         currentUser = { ign, rank: 'Officer', activity: 'Active' };
-        db.ref('users/' + ign).set(currentUser);
-        updateUserHeader();
-        alert('Registered!');
+        db.ref('users/' + ign).set(currentUser).then(() => {
+            updateUserHeader();
+            alert('Registration successful! You can now post.');
+            localStorage.setItem('currentUser', JSON.stringify(currentUser)); // Persist login
+        }).catch(error => {
+            console.error('Registration error:', error);
+            alert('Registration failed. Check console for details.');
+        });
+    } else {
+        alert('Please enter an In-Game Name.');
     }
 }
 
-// High Command (Password Protected)
+// High Command
 function showHighCommand() {
     const password = prompt('Enter High Command Password:');
     if (password === highCommandPassword) {
-        // Simulate admin panel (expand in production)
-        alert('High Command Access Granted. Full admin rights here.');
-        // Add role management UI here
+        alert('High Command Access Granted.');
+        // Add admin UI here
     } else {
         alert('Access Denied');
     }
@@ -67,7 +76,7 @@ function showPersonnel() {
     showSection('personnel');
 }
 
-// Academy Editing (High Command Only)
+// Academy Editing
 function editDescription(type) {
     if (currentUser && ['IGP', 'AIGP', 'DIG'].includes(currentUser.rank)) {
         const newDesc = prompt('Edit description:');
@@ -80,162 +89,164 @@ function editDescription(type) {
 // Load Academy Descriptions
 db.ref('academy').on('value', snapshot => {
     const data = snapshot.val();
-    if (data) {
+    if (data && document.getElementById('handbookDesc')) {
         document.getElementById('handbookDesc').innerText = data.handbook || 'Default description';
         document.getElementById('documentsDesc').innerText = data.documents || 'Default description';
     }
 });
 
-// Headquarters Templates and Posts
-const templates = {
-    incident: "[Incident Details]\nLocation:\nDescription:\nSuspects:",
-    report: "[Report Details]\nType:\nDetails:",
-    warrant: "[Warrant Details]\nSuspect:\nReason:"
-};
-
-function copyTemplate(type) {
-    navigator.clipboard.writeText(templates[type]);
-    alert('Template copied!');
-}
-
-function submitPost(type) {
-    const content = document.getElementById(type + 'Post').value;
-    if (content && currentUser) {
-        const post = {
-            author: currentUser.ign,
-            rank: currentUser.rank,
-            timestamp: new Date().toISOString(),
-            content
-        };
-        db.ref('posts/' + type).push(post);
-        document.getElementById(type + 'Post').value = '';
-    }
-}
-
-// Load Posts
-['incident', 'report', 'warrant'].forEach(type => {
-    db.ref('posts/' + type).on('value', snapshot => {
-        const posts = snapshot.val();
-        let html = '';
-        for (let id in posts) {
-            const p = posts[id];
-            html += `<p>[${p.author}] | [${p.rank}] | [${p.timestamp}]<br>${p.content}</p>`;
-        }
-        document.getElementById(type + 'Posts').innerHTML = html;
-    });
-});
-
-// My Posts
-function showMyPosts() {
-    if (currentUser) {
-        // Aggregate posts by user (simplified)
-        db.ref('posts').on('value', snapshot => {
-            const allPosts = snapshot.val();
-            let myPosts = '';
-            for (let channel in allPosts) {
-                for (let id in allPosts[channel]) {
-                    if (allPosts[channel][id].author === currentUser.ign) {
-                        myPosts += `<p>${channel}: ${allPosts[channel][id].content}</p>`;
-                    }
-                }
-            }
-            document.getElementById('userPosts').innerHTML = myPosts;
-        });
-    }
-    showSection('myPosts');
-}
-
-// Initialize
-window.onload = () => {
-    // Load current user from localStorage (or Firebase Auth in production)
-    const savedUser = localStorage.getItem('currentUser');
-    if (savedUser) {
-        currentUser = JSON.parse(savedUser);
-        updateUserHeader();
-    }
-};
-// Copy Template Function
+// Copy Template
 function copyTemplate(categoryKey) {
     const templates = {
         incident: "[Incident Details]\nLocation:\nDescription:\nSuspects:",
         report: "[Report Details]\nType:\nDetails:",
         warrant: "[Warrant Details]\nSuspect:\nReason:"
     };
-    navigator.clipboard.writeText(templates[categoryKey]);
-    alert('Template copied!');
+    navigator.clipboard.writeText(templates[categoryKey]).then(() => {
+        alert('Template copied!');
+    }).catch(err => {
+        console.error('Copy failed:', err);
+        alert('Copy failed. Check permissions.');
+    });
 }
 
-// Submit Post Function
+// Submit Post with Debugging
 function submitPost(categoryKey) {
-    const content = document.getElementById('postContent').value;
-    if (content && currentUser) {
-        const post = {
-            author: currentUser.ign,
-            rank: currentUser.rank,
-            timestamp: new Date().toISOString(),
-            content,
-            category: categoryKey
-        };
-        db.ref('posts/' + categoryKey).push(post);
-        document.getElementById('postContent').value = '';
-    } else {
-        alert('Please log in and fill in details.');
+    const content = document.getElementById('postContent').value.trim();
+    if (!content) {
+        alert('Please fill in the post content.');
+        return;
     }
+    if (!currentUser) {
+        alert('Please register/login first.');
+        return;
+    }
+    console.log('Submitting post:', { categoryKey, content, user: currentUser }); // Debug log
+    const post = {
+        author: currentUser.ign,
+        rank: currentUser.rank,
+        timestamp: new Date().toISOString(),
+        content,
+        category: categoryKey
+    };
+    db.ref('posts/' + categoryKey).push(post).then(() => {
+        alert('Post submitted successfully!');
+        document.getElementById('postContent').value = '';
+        console.log('Post saved to Firebase.'); // Debug log
+    }).catch(error => {
+        console.error('Post submission error:', error);
+        alert('Post failed. Check console for details.');
+    });
 }
 
-// Load Posts with 3-Dot Menu
+// Load Posts with Serial Numbers and Edit Menu
 function loadPosts(categoryKey) {
     db.ref('posts/' + categoryKey).on('value', snapshot => {
         const posts = snapshot.val();
         let html = '';
         let serial = 1;
-        for (let id in posts) {
-            const p = posts[id];
-            html += `
-                <div class="post-item">
-                    <div class="post-header">${serial}. [${p.author}] | [${p.rank}] | [${p.timestamp}]</div>
-                    <div class="post-content">${p.content}</div>
-                    <div class="post-menu" onclick="toggleEdit('${id}', '${categoryKey}')">⋮</div>
-                    <div id="edit-${id}" class="edit-option">
-                        <textarea id="edit-content-${id}">${p.content}</textarea>
-                        <button onclick="saveEdit('${id}', '${categoryKey}')">Save</button>
-                        <button onclick="deletePost('${id}', '${categoryKey}')">Delete</button>
+        if (posts) {
+            for (let id in posts) {
+                const p = posts[id];
+                html += `
+                    <div class="post-item">
+                        <div class="post-header">${serial}. [${p.author}] | [${p.rank}] | [${new Date(p.timestamp).toLocaleString()}]</div>
+                        <div class="post-content">${p.content}</div>
+                        <div class="post-menu" onclick="toggleEdit('${id}', '${categoryKey}')">⋮</div>
+                        <div id="edit-${id}" class="edit-option">
+                            <textarea id="edit-content-${id}">${p.content}</textarea>
+                            <button onclick="saveEdit('${id}', '${categoryKey}')">Save</button>
+                            <button onclick="deletePost('${id}', '${categoryKey}')">Delete</button>
+                        </div>
                     </div>
-                </div>
-            `;
-            serial++;
+                `;
+                serial++;
+            }
+        } else {
+            html = '<p>No posts yet.</p>';
         }
-        document.getElementById('postsList').innerHTML = html;
+        if (document.getElementById('postsList')) {
+            document.getElementById('postsList').innerHTML = html;
+        }
+    }, error => {
+        console.error('Load posts error:', error);
+        alert('Failed to load posts. Check console.');
     });
 }
 
-// Toggle Edit Menu (RBAC: Only High Command or Author)
+// Toggle Edit Menu (RBAC)
 function toggleEdit(postId, categoryKey) {
     const editDiv = document.getElementById(`edit-${postId}`);
-    if (currentUser && (['IGP', 'AIGP', 'DIG'].includes(currentUser.rank) || db.ref('posts/' + categoryKey + '/' + postId).once('value').then(snap => snap.val().author === currentUser.ign))) {
-        editDiv.classList.toggle('show');
-    } else {
-        alert('Access Denied');
+    if (!currentUser) {
+        alert('Please login.');
+        return;
     }
+    db.ref('posts/' + categoryKey + '/' + postId).once('value').then(snapshot => {
+        const post = snapshot.val();
+        if (['IGP', 'AIGP', 'DIG'].includes(currentUser.rank) || post.author === currentUser.ign) {
+            editDiv.classList.toggle('show');
+        } else {
+            alert('Access Denied');
+        }
+    });
 }
 
 // Save Edit
 function saveEdit(postId, categoryKey) {
     const newContent = document.getElementById(`edit-content-${postId}`).value;
-    db.ref('posts/' + categoryKey + '/' + postId).update({ content: newContent });
+    db.ref('posts/' + categoryKey + '/' + postId).update({ content: newContent }).then(() => {
+        alert('Edit saved!');
+    }).catch(error => {
+        console.error('Edit error:', error);
+        alert('Edit failed.');
+    });
 }
 
-// Delete Post (High Command Only)
+// Delete Post
 function deletePost(postId, categoryKey) {
     if (currentUser && ['IGP', 'AIGP', 'DIG'].includes(currentUser.rank)) {
-        db.ref('posts/' + categoryKey + '/' + postId).remove();
+        db.ref('posts/' + categoryKey + '/' + postId).remove().then(() => {
+            alert('Post deleted!');
+        }).catch(error => {
+            console.error('Delete error:', error);
+            alert('Delete failed.');
+        });
     } else {
         alert('Access Denied');
     }
 }
 
-// Initialize Posts on Sub-Pages
-if (window.location.pathname.includes('incident-report.html')) loadPosts('incident');
-if (window.location.pathname.includes('report.html')) loadPosts('report');
-if (window.location.pathname.includes('warrant-issues.html')) loadPosts('warrant');
-                                                          
+// My Posts
+function showMyPosts() {
+    if (!currentUser) {
+        alert('Please login.');
+        return;
+    }
+    db.ref('posts').on('value', snapshot => {
+        const allPosts = snapshot.val();
+        let myPosts = '';
+        for (let channel in allPosts) {
+            for (let id in allPosts[channel]) {
+                if (allPosts[channel][id].author === currentUser.ign) {
+                    myPosts += `<p>${channel}: ${allPosts[channel][id].content}</p>`;
+                }
+            }
+        }
+        document.getElementById('userPosts').innerHTML = myPosts || '<p>No posts found.</p>';
+    });
+    showSection('myPosts');
+}
+
+// Initialize
+window.onload = () => {
+    // Load saved user
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        updateUserHeader();
+    }
+    // Load posts on sub-pages
+    if (window.location.pathname.includes('incident-report.html')) loadPosts('incident');
+    if (window.location.pathname.includes('report.html')) loadPosts('report');
+    if (window.location.pathname.includes('warrant-issues.html')) loadPosts('warrant');
+};
