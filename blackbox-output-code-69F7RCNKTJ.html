@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Police Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="breadcrumbs">
+        <a href="index.html"><- Back to Home</a>
+    </nav>
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    <div class="side-menu" id="sideMenu">
+        <button onclick="showSection('register')">Create Account</button>
+        <button onclick="showSection('myPosts')">My Posts</button>
+        <button onclick="showHighCommand()">High Command</button>
+        <button onclick="showPersonnel()">Current Personnel List</button>
+    </div>
+    <div class="content glassmorphism">
+        <h2>Police Academy</h2>
+        <div class="subsection">
+            <h3>Police Hand Book</h3>
+            <p id="handbookDesc">Editable description here. (Public read-only)</p>
+            <button id="editHandbook" class="hidden" onclick="editDescription('handbook')">Edit</button>
+        </div>
+        <div class="subsection">
+            <h3>Police Documents</h3>
+            <p id="documentsDesc">Editable description here. (Public read-only)</p>
+            <button id="editDocuments" class="hidden" onclick="editDescription('documents')">Edit</button>
+        </div>
+    </div>
+    <div class="user-header" id="userHeader"></div>
+    <script src="script.js"></script>
+</body>
+</html>

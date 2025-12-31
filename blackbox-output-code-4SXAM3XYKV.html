@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Police Headquarters (Operations)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="breadcrumbs">
+        <a href="index.html"><- Back to Home</a>
+    </nav>
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+    <div class="side-menu" id="sideMenu">
+        <button onclick="showSection('register')">Create Account</button>
+        <button onclick="showSection('myPosts')">My Posts</button>
+        <button onclick="showHighCommand()">High Command</button>
+        <button onclick="showPersonnel()">Current Personnel List</button>
+    </div>
+    <div class="content glassmorphism">
+        <h2>Police Headquarters (Operations)</h2>
+        <div class="channel">
+            <h3>#Incident Report</h3>
+            <button onclick="copyTemplate('incident')">Template Copy</button>
+            <textarea id="incidentPost" placeholder="Paste template and fill details"></textarea>
+            <button onclick="submitPost('incident')">Submit</button>
+            <div id="incidentPosts"></div>
+        </div>
+        <div class="channel">
+            <h3>#Report</h3>
+            <button onclick="copyTemplate('report')">Template Copy</button>
+            <textarea id="reportPost" placeholder="Paste template and fill details"></textarea>
+            <button onclick="submitPost('report')">Submit</button>
+            <div id="reportPosts"></div>
+        </div>
+        <div class="channel">
+            <h3>#Warrant Issues</h3>
+            <button onclick="copyTemplate('warrant')">Template Copy</button>
+            <textarea id="warrantPost" placeholder="Paste template and fill details"></textarea>
+            <button onclick="submitPost('warrant')">Submit</button>
+            <div id="warrantPosts"></div>
+        </div>
+    </div>
+    <div class="user-header" id="userHeader"></div>
+    <script src="script.js"></script>
+</body>
+</html>
