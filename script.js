@@ -1,12 +1,11 @@
 // Firebase Config (Replace with your real keys!)
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "your-project.firebaseapp.com",
-    databaseURL: "https://your-project-default-rtdb.firebaseio.com",
-    projectId: "your-project",
-    storageBucket: "your-project.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "your-app-id"
+  apiKey: "AIzaSyBq0GahN12jj-oESFeSKm_gofNK_CSaPZU",
+  authDomain: "bspd-2f53d.firebaseapp.com",
+  projectId: "bspd-2f53d",
+  storageBucket: "bspd-2f53d.firebasestorage.app",
+  messagingSenderId: "733364732184",
+  appId: "1:733364732184:web:fe393cfcb20ac3e6395e6d"
 };
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
