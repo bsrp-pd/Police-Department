@@ -154,3 +154,88 @@ window.onload = () => {
         updateUserHeader();
     }
 };
+// Copy Template Function
+function copyTemplate(categoryKey) {
+    const templates = {
+        incident: "[Incident Details]\nLocation:\nDescription:\nSuspects:",
+        report: "[Report Details]\nType:\nDetails:",
+        warrant: "[Warrant Details]\nSuspect:\nReason:"
+    };
+    navigator.clipboard.writeText(templates[categoryKey]);
+    alert('Template copied!');
+}
+
+// Submit Post Function
+function submitPost(categoryKey) {
+    const content = document.getElementById('postContent').value;
+    if (content && currentUser) {
+        const post = {
+            author: currentUser.ign,
+            rank: currentUser.rank,
+            timestamp: new Date().toISOString(),
+            content,
+            category: categoryKey
+        };
+        db.ref('posts/' + categoryKey).push(post);
+        document.getElementById('postContent').value = '';
+    } else {
+        alert('Please log in and fill in details.');
+    }
+}
+
+// Load Posts with 3-Dot Menu
+function loadPosts(categoryKey) {
+    db.ref('posts/' + categoryKey).on('value', snapshot => {
+        const posts = snapshot.val();
+        let html = '';
+        let serial = 1;
+        for (let id in posts) {
+            const p = posts[id];
+            html += `
+                <div class="post-item">
+                    <div class="post-header">${serial}. [${p.author}] | [${p.rank}] | [${p.timestamp}]</div>
+                    <div class="post-content">${p.content}</div>
+                    <div class="post-menu" onclick="toggleEdit('${id}', '${categoryKey}')">⋮</div>
+                    <div id="edit-${id}" class="edit-option">
+                        <textarea id="edit-content-${id}">${p.content}</textarea>
+                        <button onclick="saveEdit('${id}', '${categoryKey}')">Save</button>
+                        <button onclick="deletePost('${id}', '${categoryKey}')">Delete</button>
+                    </div>
+                </div>
+            `;
+            serial++;
+        }
+        document.getElementById('postsList').innerHTML = html;
+    });
+}
+
+// Toggle Edit Menu (RBAC: Only High Command or Author)
+function toggleEdit(postId, categoryKey) {
+    const editDiv = document.getElementById(`edit-${postId}`);
+    if (currentUser && (['IGP', 'AIGP', 'DIG'].includes(currentUser.rank) || db.ref('posts/' + categoryKey + '/' + postId).once('value').then(snap => snap.val().author === currentUser.ign))) {
+        editDiv.classList.toggle('show');
+    } else {
+        alert('Access Denied');
+    }
+}
+
+// Save Edit
+function saveEdit(postId, categoryKey) {
+    const newContent = document.getElementById(`edit-content-${postId}`).value;
+    db.ref('posts/' + categoryKey + '/' + postId).update({ content: newContent });
+}
+
+// Delete Post (High Command Only)
+function deletePost(postId, categoryKey) {
+    if (currentUser && ['IGP', 'AIGP', 'DIG'].includes(currentUser.rank)) {
+        db.ref('posts/' + categoryKey + '/' + postId).remove();
+    } else {
+        alert('Access Denied');
+    }
+}
+
+// Initialize Posts on Sub-Pages
+if (window.location.pathname.includes('incident-report.html')) loadPosts('incident');
+if (window.location.pathname.includes('report.html')) loadPosts('report');
+if (window.location.pathname.includes('warrant-issues.html')) loadPosts('warrant');
+                                                          
