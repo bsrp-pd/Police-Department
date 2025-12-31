@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bangladesh Police | Internal Forum</title>
+  <link rel="stylesheet" href="css/forum.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="forum-header">
+  <div class="left">
+    <button class="menu-btn">☰</button>
+    <h1>Bangladesh Police Department</h1>
+    <span class="sub">Internal Forum</span>
+  </div>
+  <div class="right" id="userBar"></div>
+</header>
+
+<!-- NOTICE (High Command Only – later controlled) -->
+<section class="notice">
+  <strong>OFFICIAL NOTICE:</strong>
+  সকল অফিসারকে নতুন SOP অনুসরণ করার নির্দেশ দেওয়া হলো।
+</section>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <h2>Police Internal Communication & Records</h2>
+    <p>Authorized Officers Only</p>
+  </div>
+</section>
+
+<!-- FORUM INDEX -->
+<main class="forum-index">
+
+  <!-- CATEGORY -->
+  <div class="category">
+    <div class="cat-title">🏫 Police Academy</div>
+    <div class="cat-desc">Training, Handbook & Guidelines</div>
+
+    <div class="sub-forum">
+      📘 Handbook & SOP  
+      <span class="last-post">Last post by Inspector_Ali • 2h ago</span>
+    </div>
+  </div>
+
+  <!-- CATEGORY -->
+  <div class="category">
+    <div class="cat-title">🏢 Police Headquarters</div>
+    <div class="cat-desc">Official Operations & Reports</div>
+
+    <div class="sub-forum" onclick="openCategory('incident')">
+      📂 Incident Reports  
+      <span class="last-post">Last post by Constable_Salim • 30m ago</span>
+    </div>
+
+    <div class="sub-forum" onclick="openCategory('report')">
+      📂 General Reports  
+      <span class="last-post">Last post by SI_Rahim • 1h ago</span>
+    </div>
+
+    <div class="sub-forum" onclick="openCategory('warrant')">
+      📂 Warrant Issues  
+      <span class="last-post">Last post by ASP_Kamal • 3h ago</span>
+    </div>
+  </div>
+
+</main>
+
+<script src="js/forum.js"></script>
+</body>
+  </html>
